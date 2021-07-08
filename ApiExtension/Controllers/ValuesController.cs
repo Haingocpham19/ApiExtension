@@ -1,4 +1,5 @@
-﻿using ApiExtensionAmazon.ModelEx;
+﻿using ApiExtension.ModelEx;
+using ApiExtensionAmazon.ModelEx;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,45 +14,55 @@ namespace ApiExtension.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        List<Stuff> lst = ListStuff.listAll();
         // GET: api/<ValuesController>
         [HttpGet]
         public List<Stuff> Get()
         {
-            List<Stuff> lstStuffs = new List<Stuff> {
-                new Stuff{Id=1,Name="Adidas",Url="adidas.com"},
-                new Stuff{Id=2,Name="Rakuten",Url="rakuten.co.jp"},
-                new Stuff{Id=3,Name="Nike",Url="nike.com"},
-                new Stuff{Id=4,Name="Yahoo! Shopping",Url="shopping.yahoo.co.jp"},
-                new Stuff{Id=5,Name="Ebay",Url="ebay.com/"},
-                new Stuff{Id=6,Name="Adidas Jp",Url="shop.adidas.jp"},
-                new Stuff{Id=7,Name="Adidas",Url="adidas.com"},
-                new Stuff{Id=8,Name="Rakuten",Url="rakuten.co.jp"},
-                new Stuff{Id=9,Name="Nike",Url="nike.com"},
-                new Stuff{Id=10,Name="Yahoo! Shopping",Url="shopping.yahoo.co.jp"},
-                new Stuff{Id=11,Name="Ebay",Url="ebay.com/"},
-                new Stuff{Id=12,Name="Adidas Jp",Url="shop.adidas.jp"}
+            
+            return lst;
+        }
+        [HttpGet("create")]
+        public List<Stuff> Create([FromBody] Stuff stuff)
+        {
+            List<Stuff> newList = new List<Stuff>();
+            foreach (var item in lst)
+            {
+                newList.Add(item);
+            }
+            
+            Stuff newStuff = new Stuff()
+            {
+                Id = stuff.Id,
+                Name = stuff.Name,
+                Url = stuff.Url
             };
-
-            return lstStuffs;
+            newList.Add(newStuff);
+            return newList;
         }
-
-        // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // Get api/<ValuesController>
+        [HttpGet("remove/{id}")]
+        public List<Stuff> Remove(int id)
         {
-            return "value";
+            lst.RemoveAt(id-1);            
+            return lst;
         }
-
-        // POST api/<ValuesController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPut("edit/{id}")]
+        public Stuff Edit(int id)
         {
+            Stuff newStuff = new Stuff()
+            {
+                Id = lst[id-1].Id,
+                Name = lst[id-1].Name,
+                Url = lst[id-1].Url
+            };
+            return newStuff;
         }
-
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
+
         }
 
         // DELETE api/<ValuesController>/5
